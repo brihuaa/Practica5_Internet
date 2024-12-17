@@ -7,8 +7,8 @@ export interface Ability {
   }
 
 export interface Move {
-    name: String;
-    url: String;
+    name: string;
+    url: string;
   }
   
   // Representa un tipo de Pokémon
