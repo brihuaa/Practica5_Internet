@@ -10,6 +10,7 @@ type Ability {
 type Move {
   name: String!
   url: String!
+  powers: String!
 }
 
 type Type {

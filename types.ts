@@ -9,6 +9,7 @@ export interface Ability {
 export interface Move {
     name: string;
     url: string;
+    powes: string;
   }
   
   // Representa un tipo de Pokémon
