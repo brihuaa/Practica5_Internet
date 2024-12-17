@@ -24,8 +24,8 @@ type Pokemon {
   base_experience: Int!
   height: Int!
   weight: Int!
-  abilities: String!
-  moves: String!
+  abilities: [Ability!]! # Abilities debe ser una lista de objetos
+  moves: [Move!]!       # Moves debe ser una lista de objetos
 }
 
 type Query {
