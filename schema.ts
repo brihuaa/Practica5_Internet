@@ -3,7 +3,13 @@ type Ability {
   name: String!
   url: String!
   is_hidden: Boolean
-  slot: Int
+  slot: Int!
+  effect: String # Nuevo campo opcional para el efecto
+}
+
+type Move {
+  name: String!
+  url: String!
 }
 
 type Type {
@@ -12,24 +18,20 @@ type Type {
   slot: Int!
 }
 
-type Encounter {
-  location_area: String!
-  url: String!
-}
-
 type Pokemon {
-  id: Int!
+  id: ID!
   name: String!
-  base_experience: Int
-  height: Int
-  weight: Int
+  base_experience: Int!
+  height: Int!
+  weight: Int!
   abilities: [Ability!]!
   types: [Type!]!
-  encounters: [Encounter!]!
+  moves: [Move!]! # Nuevo campo para movimientos
 }
 
 type Query {
-  pokemon(id: Int, name: String): Pokemon
-  infinitePokemons(url: String): [Pokemon!]!
+  pokemon(id: ID, name: String): Pokemon
+  abilities: [Ability!]!
 }
+
 `;
