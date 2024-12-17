@@ -24,14 +24,12 @@ type Pokemon {
   base_experience: Int!
   height: Int!
   weight: Int!
-  abilities: [Ability!]!
-  types: [Type!]!
-  moves: [Move!]! # Nuevo campo para movimientos
 }
 
 type Query {
   pokemon(id: ID, name: String): Pokemon
-  abilities: [Ability!]!
+  infinitePokemons: [Pokemon!]! # Nueva definición
 }
+
 
 `;

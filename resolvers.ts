@@ -1,82 +1,60 @@
 const POKEAPI_URL = "https://pokeapi.co/api/v2";
 
 export const resolvers = {
-  Query: {
-    // Obtener detalles de un Pokémon por ID o nombre
-    pokemon: async (_: unknown, args: { id?: number; name?: string }) => {
-      const endpoint = args.id
-        ? `${POKEAPI_URL}/pokemon/${args.id}`
-        : `${POKEAPI_URL}/pokemon/${args.name?.toLowerCase()}`;
-
-      const response = await fetch(endpoint);
-      if (!response.ok) throw new Error("Pokemon not found");
-
-      const data = await response.json();
-
-      // Solicitar encuentros del Pokémon
-      const encountersResponse = await fetch(data.location_area_encounters);
-      const encounters = encountersResponse.ok
-        ? await encountersResponse.json()
-        : [];
-
-      return {
-        id: data.id,
-        name: data.name,
-        base_experience: data.base_experience,
-        height: data.height,
-        weight: data.weight,
-        abilities: data.abilities.map((a: any) => ({
-          name: a.ability.name,
-          url: a.ability.url,
-          is_hidden: a.is_hidden,
-          slot: a.slot,
-        })),
-        types: data.types.map((t: any) => ({
-          name: t.type.name,
-          url: t.type.url,
-          slot: t.slot,
-        })),
-        encounters: encounters.map((e: any) => ({
-          location_area: e.location_area.name,
-          url: e.location_area.url,
-        })),
-      };
-    },
-
-    // Solicitar infinitamente Pokémon utilizando next url
-    infinitePokemons: async (_: unknown, args: { url?: string }) => {
-      const endpoint = args.url || `${POKEAPI_URL}/pokemon?limit=10`;
-
-      const response = await fetch(endpoint);
-      if (!response.ok) throw new Error("Failed to fetch Pokemons");
-
-      const data = await response.json();
-
-      // Extraer detalles de cada Pokémon
-      const pokemons = await Promise.all(
-        data.results.map(async (pokemon: any) => {
-          const detailsResponse = await fetch(pokemon.url);
-          const details = await detailsResponse.json();
+    Query: {
+      // Resolver para obtener un Pokémon por ID o nombre
+      pokemon: async (
+        _: unknown,
+        { id, name }: { id?: string; name?: string }
+      ): Promise<any> => {
+        try {
+          let apiUrl = "https://pokeapi.co/api/v2/pokemon/";
+  
+          // Si se pasa un ID o nombre, ajustar la URL
+          if (id) apiUrl += id;
+          else if (name) apiUrl += name;
+  
+          const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch Pokémon with ID/Name: ${id || name}`);
+          }
+          const data = await response.json();
+  
+          // Devolver datos relevantes del Pokémon
           return {
-            id: details.id,
-            name: details.name,
-            base_experience: details.base_experience,
-            height: details.height,
-            weight: details.weight,
-            abilities: details.abilities.map((a: any) => ({
-              name: a.ability.name,
-              url: a.ability.url,
-            })),
-            types: details.types.map((t: any) => ({
-              name: t.type.name,
-              url: t.type.url,
-              slot: t.slot,
-            })),
+            id: data.id,
+            name: data.name,
+            base_experience: data.base_experience,
+            height: data.height,
+            weight: data.weight,
           };
-        }),
-      );
-
-      return pokemons;
+        } catch (error) {
+          console.error("Error fetching Pokémon:", error);
+          throw new Error("Could not fetch Pokémon data.");
+        }
+      },
+  
+      // Resolver para obtener una lista infinita de Pokémon
+      infinitePokemons: async (): Promise<any[]> => {
+        try {
+          const response = await fetch(
+            "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch infinite Pokémon list.");
+          }
+          const data = await response.json();
+  
+          // Mapear los resultados a un formato simple
+          return data.results.map((pokemon: any, index: number) => ({
+            id: index + 1, // Asignar un ID incremental
+            name: pokemon.name,
+          }));
+        } catch (error) {
+          console.error("Error fetching infinite Pokémon list:", error);
+          throw new Error("Could not fetch infinite Pokémon data.");
+        }
+      },
     },
-  },
-};
+  };
+  
