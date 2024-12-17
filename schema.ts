@@ -24,6 +24,8 @@ type Pokemon {
   base_experience: Int!
   height: Int!
   weight: Int!
+  abilities: Int!
+  moves: Int!
 }
 
 type Query {
