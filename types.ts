@@ -5,6 +5,11 @@ export interface Ability {
     is_hidden?: boolean; // Algunas habilidades pueden no tener este campo
     slot: number;
   }
+
+export interface Move {
+    name: String;
+    url: String;
+  }
   
   // Representa un tipo de Pokémon
   export interface Type {
